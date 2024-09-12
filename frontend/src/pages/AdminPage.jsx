@@ -4,7 +4,7 @@ function AdminPage() {
   const [url, setUrl] = useState('')
 
   const shortenLink = () => {
-
+    console.log(url)
   }
   return (
     <div className='page-container'>
@@ -16,7 +16,7 @@ function AdminPage() {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     />
-                    <button className="shorten-link" onSubmit={shortenLink}>Shrink</button>
+                    <button className="shorten-link" onClick={shortenLink}>Shrink</button>
                 </div>
             </div>
             <div className="data-container">
