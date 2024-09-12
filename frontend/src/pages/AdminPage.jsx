@@ -3,20 +3,28 @@ import React, { useState } from 'react'
 function AdminPage() {
   const [url, setUrl] = useState('')
 
-  const shortenLink = () => {
-    console.log(url)
+  const shortenLink = (e) => {
+    e.preventDefault()
+    
   }
+
+  
+
   return (
     <div className='page-container'>
         <div className="content-container">
             <div className="input-container">
                 <div className="function">
-                    <input 
-                    type="text"
-                    value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    />
-                    <button className="shorten-link" onClick={shortenLink}>Shrink</button>
+                    <form onSubmit={shortenLink}>
+                        <input 
+                        type="text"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        required
+                        />
+
+                        <button className="shorten-link" type='submit'>Shrink</button>
+                    </form>               
                 </div>
             </div>
             <div className="data-container">
