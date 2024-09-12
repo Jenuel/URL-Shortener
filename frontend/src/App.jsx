@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import './App.css'
+import AdminPage from './pages/AdminPage'
 
 function App() {
  
 
   return (
-    <div></div>
+    <AdminPage/>
   )
 }
 
