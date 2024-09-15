@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	e := echo.New() //Creates a new Instance
-
 	dsn := "admin:admin@tcp(127.0.0.1:3306)/shortener"
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -19,9 +17,23 @@ func main() {
 	}
 	defer db.Close()
 
-	//store
-	e.GET("/shrink", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+	e := echo.New() //Creates a new Instance
 	e.Logger.Fatal(e.Start(":1323"))
+
+	//routes
+	e.POST("/shrink", shrinkUrl)
+	e.GET("/links", getAllLinks)
+	e.GET("/:id", redirectUrl)
+}
+
+func shrinkUrl(c echo.Context) error {
+	return c.String(http.StatusOK, "Hello, World!")
+}
+
+func getAllLinks(c echo.Context) error {
+	return c.String(http.StatusOK, "Hello, World!")
+}
+
+func redirectUrl(c echo.Context) error {
+	return c.String(http.StatusOK, "Hello, World!")
 }
