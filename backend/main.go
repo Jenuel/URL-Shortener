@@ -9,6 +9,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+var db *sql.DB
+
 func main() {
 	dsn := "admin:admin@tcp(127.0.0.1:3306)/shortener"
 	db, err := sql.Open("mysql", dsn)
@@ -24,6 +26,13 @@ func main() {
 	e.POST("/shrink", shrinkUrl)
 	e.GET("/links", getAllLinks)
 	e.GET("/:id", redirectUrl)
+}
+
+type urlData struct {
+	id           int    `json:"id"`
+	original_url string `json:"original"`
+	short_code   string `json:"short"`
+	click_count  int    `json:"click"`
 }
 
 func shrinkUrl(c echo.Context) error {
