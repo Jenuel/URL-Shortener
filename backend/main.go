@@ -40,7 +40,28 @@ func shrinkUrl(c echo.Context) error {
 }
 
 func getAllLinks(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	var links []urlData
+
+	query := "SELECT id, original_url, short_code, click_count FROM links"
+	rows, err := db.Query(query)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Error fetching links")
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var link urlData
+		if err := rows.Scan(&link.id, &link.original_url, &link.short_code, &link.click_count); err != nil {
+			return c.String(http.StatusInternalServerError, "Error scanning row")
+		}
+		links = append(links, link)
+	}
+
+	if err := rows.Err(); err != nil {
+		return c.String(http.StatusInternalServerError, "Error processing rows")
+	}
+
+	return c.JSON(http.StatusOK, links)
 }
 
 func redirectUrl(c echo.Context) error {
