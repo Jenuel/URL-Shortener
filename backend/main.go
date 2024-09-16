@@ -125,5 +125,18 @@ func getAllLinks(c echo.Context) error {
 }
 
 func redirectUrl(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	code := c.Param("id")
+	query := "SELECT original_url FROM links WHERE short_code = ?"
+
+	var originalURL string
+
+	err := db.QueryRow(query, code).Scan(&originalURL)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return c.String(http.StatusNotFound, "Short code not found.")
+		}
+		return c.String(http.StatusInternalServerError, "Server error occurred.")
+	}
+
+	return c.Redirect(http.StatusFound, originalURL)
 }
