@@ -43,7 +43,23 @@ type urlRequest struct {
 }
 
 func shrinkUrl(c echo.Context) error {
+	var req urlRequest
 
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request payload"})
+	}
+
+	code, err := generateCode(req.url)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error generating code"})
+	}
+
+	_, err = db.Exec("INSERT INTO links (original_url, short_code, click_count) VALUES (?, ?, ?)", req.url, code, 0)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error saving URL to database"})
+	}
+
+	return c.String(http.StatusOK, "Shrinking was successful")
 }
 
 func isKeyExisting(key string) (bool, error) {
