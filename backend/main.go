@@ -1,9 +1,12 @@
 package main
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"log"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
@@ -35,8 +38,49 @@ type urlData struct {
 	click_count  int    `json:"click"`
 }
 
+type urlRequest struct {
+	url string `json:"url"`
+}
+
 func shrinkUrl(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+
+}
+
+func isKeyExisting(key string) (bool, error) {
+	var shortCode string
+	query := `SELECT short_code FROM links WHERE short_code = $1`
+	err := db.QueryRow(query, key).Scan(&shortCode)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
+}
+
+func generateCode(url string) (string, error) {
+	length := 5
+	for {
+		hash := sha256.New()
+		hash.Write([]byte(url + time.Now().String()))
+		hashBytes := hash.Sum(nil)
+		hashString := hex.EncodeToString(hashBytes)
+
+		if length > len(hashString) {
+			length = len(hashString)
+		}
+		shortKey := hashString[:length]
+
+		exists, err := isKeyExisting(shortKey)
+		if err != nil {
+			return "", err
+		}
+
+		if !exists {
+			return shortKey, nil
+		}
+	}
 }
 
 func getAllLinks(c echo.Context) error {
