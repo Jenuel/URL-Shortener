@@ -10,6 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 var db *sql.DB
@@ -31,6 +32,12 @@ func main() {
 	}
 
 	e := echo.New() // Creates a new instance
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+	}))
+
 	// Define routes
 	e.POST("/shrink", shrinkUrl)
 	e.GET("/links", getAllLinks)
