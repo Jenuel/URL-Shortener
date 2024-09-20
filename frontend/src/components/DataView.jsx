@@ -2,7 +2,28 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
 function DataView() {
+  useEffect(() => {
+    const fetchUrls = async () => {
+      try {
+        const response = await axios.get('http://localhost:1323/links');
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching portfolios:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  
+    fetchUrls();
+  })
 
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  
   return (
     <div>
     <h1>Data View</h1>
