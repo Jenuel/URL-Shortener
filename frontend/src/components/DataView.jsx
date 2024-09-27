@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-
+import { useUrlContext } from '../context/UrlContext'
 function DataView() {
   useEffect(() => {
     const fetchUrls = async () => {
       try {
         const response = await axios.get('http://localhost:1323/links');
-        setData(response.data);
+        setUrls(response.data)
       } catch (error) {
         console.error('Error fetching portfolios:', error);
       } finally {
@@ -15,9 +15,9 @@ function DataView() {
     }
   
     fetchUrls();
-  })
+  }, [setUrls])
 
-  const [data, setData] = useState([])
+  const { shortenedUrls, setUrls } = useUrlContext();
   const [loading, setLoading] = useState(true)
 
   if (loading) {
